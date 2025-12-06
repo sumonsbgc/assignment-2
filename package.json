@@ -1,10 +1,9 @@
 {
 	"name": "vehicle-rental-system",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "assignment for vehicle rental system backend - using express, typescript and postgres for PH",
+	"main": "./src/server.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "tsx --watch ./src/server.ts"
 	},
 	"keywords": [],
