@@ -1,12 +1,9 @@
-import jwt from "jsonwebtoken";
-
 import { pool } from "../../database/db";
 import { helpers } from "../../lib/helper";
 import { IUserValidData } from "./auth.type";
-import config from "../../config";
 
 const createUser = async (data: IUserValidData) => {
-	const { name, email, password, phone, role = "customer" } = data;
+	const { name, email, password, phone, role } = data;
 	const hashPassword = await helpers.makeHashPassword(password);
 
 	const result = await pool.query(
@@ -28,18 +25,13 @@ const loginUser = async (data: Pick<IUserValidData, "email" | "password">) => {
 		);
 
 		if (isPasswordValid) {
-			const token = jwt.sign(
-				{
-					name: user.name,
-					email: user.email,
-					role: user.role,
-				},
-				config.jwtSecret as string,
-				{
-					expiresIn: "7d",
-				}
-			);
+			const payload = {
+				name: user.name,
+				email: user.email,
+				role: user.role,
+			};
 
+			const token = await helpers.encrypt(payload);
 			const { password, ...restUser } = user;
 
 			return {
@@ -76,6 +68,7 @@ const isUserExists = async (
 		`SELECT ${columns} FROM users WHERE email = $1`,
 		[email]
 	);
+	console.log(email, "email in service");
 
 	const userExists = result.rows.length > 0;
 	const user = userExists ? result.rows[0] : null;
@@ -86,7 +79,7 @@ const isUserExists = async (
 	};
 };
 
-export const service = {
+export const authService = {
 	createUser,
 	isUserExists,
 	loginUser,

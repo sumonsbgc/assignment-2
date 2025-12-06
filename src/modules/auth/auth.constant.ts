@@ -3,6 +3,7 @@ enum Roles {
 	customer = "customer",
 }
 
-const isValidRole = new Set<string>([Roles.admin, Roles.customer]);
+type IRoles = keyof typeof Roles;
+const isValidRole = new Set<IRoles>([Roles.admin, Roles.customer]);
 
 export { Roles, isValidRole };

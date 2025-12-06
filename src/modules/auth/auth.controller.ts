@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { service } from "./auth.service";
+import { authService } from "./auth.service";
 import { validation } from "./auth.validation";
 
 class AuthController {
@@ -21,7 +21,7 @@ class AuthController {
 				token,
 				isUserExists,
 				message: loginMessage,
-			} = await service.loginUser(data);
+			} = await authService.loginUser(data);
 
 			if (!isUserExists && !token) {
 				return res.status(400).json({
@@ -60,21 +60,23 @@ class AuthController {
 				});
 			}
 
-			const isUserExists = await service.isUserExists(data.email);
+			const { isUserExists, user } = await authService.isUserExists(data.email);
+
+			console.log("is user exists in controller", { isUserExists, user });
 
 			if (isUserExists) {
 				return res.status(400).json({
 					success: false,
-					message: "User already exists with this email",
+					message: "User already exists",
 				});
 			}
 
-			const result = await service.createUser(data);
+			const result = await authService.createUser(data);
 
 			if (result?.rows?.length > 0) {
 				return res.status(201).json({
 					success: true,
-					message: "User created successfully",
+					message: "User registered successfully",
 					user: result.rows[0],
 				});
 			} else {

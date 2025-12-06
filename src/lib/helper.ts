@@ -1,12 +1,6 @@
+import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-const successResponse = (data: any, message = "Success") => {
-	return {
-		success: true,
-		message,
-		data,
-	};
-};
+import config from "../config";
 
 const makeHashPassword = async (password: string): Promise<string> => {
 	const hash = await bcrypt.hash(password, 10);
@@ -21,10 +15,31 @@ const isPasswordMatched = async (
 	return isMatch;
 };
 
+const encrypt = async (payload: JwtPayload): Promise<string> => {
+	const token = jwt.sign(
+		{
+			name: payload.name,
+			email: payload.email,
+			role: payload.role,
+		},
+		config.jwtSecret as string,
+		{
+			expiresIn: "7d",
+		}
+	);
+
+	return token;
+};
+
+const decrypt = (token: string): JwtPayload => {
+	return jwt.verify(token, config.jwtSecret) as JwtPayload;
+};
+
 const helpers = {
-	successResponse,
 	makeHashPassword,
 	isPasswordMatched,
+	encrypt,
+	decrypt,
 };
 
 export { helpers };
