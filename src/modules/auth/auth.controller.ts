@@ -1,15 +1,95 @@
 import { Request, Response } from "express";
+import { service } from "./auth.service";
+import { validation } from "./auth.validation";
 
 class AuthController {
 	async signin(req: Request, res: Response) {
-		res.send("Login endpoint");
+		try {
+			const { isValid, message, data } = validation.validationLoginData(
+				req.body
+			);
+
+			if (!isValid) {
+				return res.status(400).json({
+					success: false,
+					message: message,
+				});
+			}
+
+			const {
+				user,
+				token,
+				isUserExists,
+				message: loginMessage,
+			} = await service.loginUser(data);
+
+			if (!isUserExists && !token) {
+				return res.status(400).json({
+					success: false,
+					message: loginMessage,
+				});
+			} else {
+				return res.status(200).json({
+					success: true,
+					message: loginMessage,
+					data: {
+						token: token,
+						user: user,
+					},
+				});
+			}
+		} catch (error: any) {
+			return res.status(500).json({
+				success: false,
+				message: "Login failed",
+				error: error.message,
+			});
+		}
 	}
 
 	async signup(req: Request, res: Response) {
-		const { name, email, password, phone } = req.body;
-		console.log(name, email, password, phone);
+		try {
+			const { isValid, message, data } = validation.validateSignupData(
+				req.body
+			);
 
-		res.send("Signup endpoint");
+			if (!isValid) {
+				return res.status(400).json({
+					success: false,
+					message: message,
+				});
+			}
+
+			const isUserExists = await service.isUserExists(data.email);
+
+			if (isUserExists) {
+				return res.status(400).json({
+					success: false,
+					message: "User already exists with this email",
+				});
+			}
+
+			const result = await service.createUser(data);
+
+			if (result?.rows?.length > 0) {
+				return res.status(201).json({
+					success: true,
+					message: "User created successfully",
+					user: result.rows[0],
+				});
+			} else {
+				return res.status(400).json({
+					success: false,
+					message: "User creation failed",
+				});
+			}
+		} catch (error: any) {
+			return res.status(500).json({
+				success: false,
+				message: "User creation failed",
+				error: error.message,
+			});
+		}
 	}
 }
 
