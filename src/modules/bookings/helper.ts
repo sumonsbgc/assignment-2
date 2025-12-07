@@ -5,7 +5,7 @@ const calculateTotalPrice = (
 	endDate: Date,
 	dailyRentPrice: number
 ): number => {
-	const diffDays = dayjs(endDate).diff(dayjs(startDate), "day") + 1;
+	const diffDays = dayjs(endDate).diff(dayjs(startDate), "day");
 	return diffDays * dailyRentPrice;
 };
 
