@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
+import { Roles } from "../auth/auth.constant";
+import { bookingService } from "../bookings/booking.service";
 
 class UserController {
 	async getUsers(req: Request, res: Response) {
@@ -7,9 +9,10 @@ class UserController {
 			const result = await userService.getUsers();
 
 			if (result.rows.length === 0) {
-				return res.status(404).json({
-					success: false,
+				return res.status(200).json({
+					success: true,
 					message: "No users found",
+					data: [],
 				});
 			}
 
@@ -40,9 +43,10 @@ class UserController {
 			});
 
 			if (result.rowCount === 0) {
-				return res.status(404).json({
-					success: false,
+				return res.status(200).json({
+					success: true,
 					message: "User not found",
+					data: [],
 				});
 			}
 
@@ -64,14 +68,24 @@ class UserController {
 		try {
 			const userId = req.params.userId;
 
-			// check if user has any active bookings before deleting. If yes, prevent deletion.
+			const activeBookingResult =
+				await bookingService.getActiveBookingsByCustomerId(Number(userId));
+
+			if (activeBookingResult.rows.length > 0) {
+				return res.status(400).json({
+					success: false,
+					message:
+						"User has active bookings and cannot be deleted. Please resolve active bookings first.",
+				});
+			}
 
 			const result = await userService.deleteUser(Number(userId));
 
 			if (result.rowCount === 0) {
-				return res.status(404).json({
-					success: false,
+				return res.status(200).json({
+					success: true,
 					message: "User not found",
+					data: [],
 				});
 			}
 

@@ -25,6 +25,7 @@ const updateUser = async (
 };
 
 const deleteUser = async (userId: number) => {
+	
 	const result = await pool.query("DELETE FROM users where id = $1", [userId]);
 	return result;
 };

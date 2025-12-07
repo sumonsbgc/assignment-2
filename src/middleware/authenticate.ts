@@ -27,7 +27,12 @@ const authenticate = () => {
 			}
 
 			const user = result.rows[0];
-			req.user = user;
+			req.user = {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				role: user.role,
+			};
 
 			next();
 		} catch (error: Error | any) {
