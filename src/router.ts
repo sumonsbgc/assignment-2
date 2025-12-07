@@ -4,7 +4,6 @@ import { userRouter } from "./modules/users/user.route";
 import { authenticate } from "./middleware/authenticate";
 import { vehicleRouter } from "./modules/vehicles/vehicle.route";
 import { bookingRouter } from "./modules/bookings/booking.route";
-import { authorize } from "./middleware/authorize";
 const router = Router();
 
 router.get("/", (req, res) => {

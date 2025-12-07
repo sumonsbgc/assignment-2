@@ -2,7 +2,7 @@
 
 **Project Name:** Vehicle Rental System (Assignment 2)
 
-**Live URL:** [Add your deployed URL here]
+**Live URL:** [https://vehicle-rental-two.vercel.app](https://vehicle-rental-two.vercel.app)
 
 ## Features & Technology Stack
 

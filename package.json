@@ -4,7 +4,8 @@
 	"description": "assignment for vehicle rental system backend - using express, typescript and postgres for PH",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsx --watch ./src/server.ts"
+		"dev": "tsx --watch ./src/server.ts",
+		"build": "tsc"
 	},
 	"keywords": [],
 	"author": "",
